@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.example.com',
+  apiUrl: 'https://crm-rmdi.onrender.com/',
   healthCheck: 'health',
   login:'api/auth/login',
   contact: 'api/contact',
