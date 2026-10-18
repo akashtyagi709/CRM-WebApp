@@ -1,0 +1,395 @@
+:host {
+  display: block;
+  min-width: 0;
+  color: #202821;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+
+  --ink: #202821;
+  --muted: #777e76;
+  --green: #47765a;
+  --line: #e6e5de;
+  --paper: #faf9f6;
+  --surface: #fffefa;
+  --soft-green: #eef0e9;
+}
+
+:host,
+:host * {
+  box-sizing: border-box;
+}
+
+:host a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.overview-page {
+  width: 100%;
+  max-width: 1180px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 38px 32px 48px;
+}
+
+
+
+.page-heading {
+  margin-bottom: 34px;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 18px;
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+}
+
+.eyebrow::before {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #699779;
+  content: "";
+}
+
+.page-heading h1 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(32px, 4vw, 44px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -1.7px;
+}
+
+.page-description {
+  max-width: 520px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+
+.welcome-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(250px, 0.8fr);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.welcome-content {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(27px, 4vw, 43px);
+}
+
+.section-label,
+.aside-label {
+  margin: 0;
+  color: var(--green);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.welcome-content h2 {
+  max-width: 430px;
+  margin: 20px 0 13px;
+  color: var(--ink);
+  font-size: clamp(25px, 2.7vw, 34px);
+  font-weight: 600;
+  line-height: 1.28;
+  letter-spacing: -1.2px;
+}
+
+.welcome-description {
+  max-width: 420px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.primary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  min-height: 39px;
+  margin-top: 25px;
+  padding: 0 15px;
+  border: 1px solid var(--ink);
+  border-radius: 4px;
+  background: var(--ink);
+  color: #fff !important;
+  font-size: 11px;
+  font-weight: 600;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.primary-action span {
+  font-size: 15px;
+  transition: transform 160ms ease;
+}
+
+.primary-action:hover {
+  border-color: var(--green);
+  background: var(--green);
+}
+
+.primary-action:hover span {
+  transform: translateX(3px);
+}
+
+.primary-action:focus-visible,
+.workspace-link:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+
+
+.welcome-aside {
+  padding: 29px 25px;
+  border-left: 1px solid var(--line);
+  background: #f7f7f2;
+}
+
+.aside-label {
+  display: block;
+  margin-bottom: 19px;
+  color: var(--muted);
+}
+
+.workflow-step {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr);
+  gap: 10px;
+  padding: 17px 0;
+  border-top: 1px solid var(--line);
+}
+
+.step-number {
+  padding-top: 2px;
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.workflow-step h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.workflow-step p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+/* Quick access */
+
+.quick-access {
+  margin-top: 36px;
+}
+
+.section-heading {
+  margin-bottom: 16px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+}
+
+.section-heading p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.workspace-link {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 14px;
+  padding: 17px 19px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface);
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.workspace-link:hover {
+  border-color: #cbd7c8;
+  background: #f7f8f2;
+}
+
+.link-index {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid #dfe4da;
+  border-radius: 4px;
+  background: var(--soft-green);
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.link-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.link-content strong {
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.link-content > span {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.link-arrow {
+  justify-self: end;
+  color: var(--muted);
+  font-size: 15px;
+  transition: color 160ms ease, transform 160ms ease;
+}
+
+.workspace-link:hover .link-arrow {
+  color: var(--green);
+  transform: translate(2px, -2px);
+}
+
+/* Footer */
+
+.overview-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 35px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  color: #898f86;
+  font-size: 10px;
+}
+
+.overview-footer span:first-child {
+  color: #535b51;
+  font-weight: 600;
+}
+
+/* Tablet */
+
+@media (max-width: 760px) {
+  .overview-page {
+    padding: 30px 22px 40px;
+  }
+
+  .welcome-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .welcome-content {
+    padding: 29px 24px;
+  }
+
+  .welcome-aside {
+    padding: 24px;
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .workflow-step {
+    padding: 14px 0;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+  .overview-page {
+    padding: 25px 16px 32px;
+  }
+
+  .page-heading {
+    margin-bottom: 25px;
+  }
+
+  .page-heading h1 {
+    font-size: 32px;
+    letter-spacing: -1.2px;
+  }
+
+  .page-description {
+    font-size: 11px;
+  }
+
+  .welcome-content {
+    padding: 25px 20px;
+  }
+
+  .welcome-content h2 {
+    margin-top: 17px;
+    font-size: 26px;
+  }
+
+  .welcome-aside {
+    padding: 22px 20px;
+  }
+
+  .quick-access {
+    margin-top: 28px;
+  }
+
+  .workspace-link {
+    grid-template-columns: 34px minmax(0, 1fr) 16px;
+    gap: 11px;
+    padding: 14px 12px;
+  }
+
+  .link-index {
+    width: 31px;
+    height: 31px;
+  }
+
+  .overview-footer {
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 28px;
+  }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .primary-action,
+  .primary-action span,
+  .workspace-link,
+  .link-arrow {
+    transition: none;
+  }
+}

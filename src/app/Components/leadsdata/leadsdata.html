@@ -1,0 +1,299 @@
+<section class="leads-page">
+
+  <header class="page-heading">
+    <p class="eyebrow">WORKSPACE / SALES</p>
+    <h1>Leads</h1>
+    <p class="page-description">
+      Manage incoming prospects and keep track of their progress.
+    </p>
+  </header>
+
+  <!-- Summary cards -->
+  <section class="summary-strip" aria-label="Lead summary">
+    <div class="summary-item">
+      <span class="summary-label">Total leads</span>
+      <strong class="summary-value">{{ leads.length }}</strong>
+    </div>
+
+    <div class="summary-item">
+      <span class="summary-label">Active pipeline</span>
+      <strong class="summary-value">{{ activePipelineCount }}</strong>
+    </div>
+
+    <div class="summary-item">
+      <span class="summary-label">Converted</span>
+      <strong class="summary-value">{{ convertedCount }}</strong>
+    </div>
+  </section>
+
+  <!-- Leads table -->
+  <section class="leads-panel" aria-labelledby="leads-heading">
+
+    <header class="panel-toolbar">
+      <div class="panel-heading">
+        <h2 id="leads-heading">All leads</h2>
+        <p>Review lead details and manage their status.</p>
+      </div>
+
+      <div class="table-controls">
+        <label class="search-control">
+          <span class="visually-hidden">Search leads</span>
+          <input
+            type="search"
+            placeholder="Search leads..."
+            [value]="searchText"
+            (input)="onSearch($event)"
+          />
+        </label>
+
+        <label class="filter-control">
+          <span class="visually-hidden">Filter by status</span>
+          <select
+            [value]="statusFilter"
+            (change)="onStatusFilterChange($event)"
+            aria-label="Filter leads by status"
+          >
+            <option value="ALL">All statuses</option>
+
+            @for (status of statuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </label>
+      </div>
+    </header>
+
+    @if (loading) {
+      <div class="empty-state">
+        <p class="empty-title">Loading leads...</p>
+      </div>
+    } @else if (errorMessage) {
+      <div class="empty-state">
+        <p class="empty-title">{{ errorMessage }}</p>
+
+        <button
+          type="button"
+          class="retry-button"
+          (click)="getLeadsData()"
+        >
+          Retry
+        </button>
+      </div>
+    } @else {
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">LEAD</th>
+              <th scope="col">PHONE</th>
+              <th scope="col">MESSAGE</th>
+              <th scope="col">CREATED</th>
+              <th scope="col">UPDATED</th>
+              <th scope="col">STATUS</th>
+              <th scope="col">ACTION</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (lead of paginatedLeads; track lead.id) {
+              <tr>
+                <td>
+                  <div class="lead-identity">
+                    <span class="lead-name">{{ lead.name }}</span>
+                    <span class="lead-email">{{ lead.email }}</span>
+                  </div>
+                </td>
+
+                <td class="phone-cell">
+                  {{ lead.phone }}
+                </td>
+
+                <td class="message-cell">
+                  <span
+                    class="message-text"
+                    [title]="lead.message"
+                  >
+                    {{ lead.message }}
+                  </span>
+                </td>
+
+                <td class="date-cell">
+                  {{ lead.createdAt | date:'dd MMM yyyy' }}
+                </td>
+
+                <td class="date-cell">
+                  {{ lead.updatedAt | date:'dd MMM yyyy, HH:mm' }}
+                </td>
+
+                <!-- Status is displayed, not directly editable -->
+                <td>
+                  <span
+                    class="status-badge"
+                    [class.status-new]="lead.status === 'NEW'"
+                    [class.status-contacted]="lead.status === 'CONTACTED'"
+                    [class.status-converted]="lead.status === 'CONVERTED'"
+                    [class.status-loss]="lead.status === 'LOSS'"
+                  >
+                    {{ lead.status }}
+                  </span>
+                </td>
+
+                <!-- Action column -->
+                <td>
+                  <button
+                    type="button"
+                    class="edit-status-button"
+                    (click)="openStatusModal(lead)"
+                    [attr.aria-label]="'Edit status for ' + lead.name"
+                    title="Edit status"
+                  >
+                    ✎
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-state">
+                  <p class="empty-title">No leads found</p>
+                  <p class="empty-description">
+                    Try changing your search or status filter.
+                  </p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <footer class="table-footer">
+        <div class="table-summary">
+          Showing <strong>{{ pageStart }}–{{ pageEnd }}</strong>
+          of <strong>{{ filteredLeads.length }}</strong> leads
+        </div>
+
+        <div class="pagination-controls">
+          <label class="page-size-control">
+            <span>Rows</span>
+
+            <select
+              [value]="pageSize"
+              (change)="onPageSizeChange($event)"
+              aria-label="Rows per page"
+            >
+              @for (size of pageSizeOptions; track size) {
+                <option [value]="size">{{ size }}</option>
+              }
+            </select>
+          </label>
+
+          <nav class="page-navigation" aria-label="Pagination">
+            <button
+              type="button"
+              class="page-button"
+              [disabled]="currentPage <= 1"
+              (click)="goToPage(currentPage - 1)"
+            >
+              Previous
+            </button>
+
+            @for (page of pageNumbers; track page) {
+              <button
+                type="button"
+                class="page-button page-number"
+                [class.is-current]="currentPage === page"
+                [attr.aria-current]="currentPage === page ? 'page' : null"
+                (click)="goToPage(page)"
+              >
+                {{ page }}
+              </button>
+            }
+
+            <button
+              type="button"
+              class="page-button"
+              [disabled]="currentPage >= totalPages"
+              (click)="goToPage(currentPage + 1)"
+            >
+              Next
+            </button>
+          </nav>
+        </div>
+      </footer>
+    }
+  </section>
+
+  <!-- Edit status modal -->
+  @if (showStatusModal && selectedLead) {
+    <div
+      class="modal-backdrop"
+      (click)="closeStatusModal()"
+    >
+      <section
+        class="status-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="status-modal-title"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="modal-header">
+          <div>
+            <p class="modal-eyebrow">LEAD MANAGEMENT</p>
+            <h2 id="status-modal-title">Edit lead status</h2>
+            <p class="modal-lead-name">{{ selectedLead.name }}</p>
+          </div>
+
+          <button
+            type="button"
+            class="modal-close-button"
+            aria-label="Close popup"
+            [disabled]="savingStatus"
+            (click)="closeStatusModal()"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <label class="modal-field-label" for="lead-status">
+            Select status
+          </label>
+
+          <select
+            id="lead-status"
+            class="modal-status-select"
+            [value]="selectedStatus"
+            (change)="onModalStatusChange($event)"
+            [disabled]="savingStatus"
+          >
+            @for (status of statuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="modal-cancel-button"
+            [disabled]="savingStatus"
+            (click)="closeStatusModal()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="modal-save-button"
+            [disabled]="savingStatus || selectedStatus === selectedLead.status"
+            (click)="saveStatus()"
+          >
+            {{ savingStatus ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      </section>
+    </div>
+  }
+
+</section>

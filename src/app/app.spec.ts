@@ -1,23 +1,37 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 import { App } from './app';
+import { User } from './Services/user';
 
 describe('App', () => {
+  let healthCheckResponse: boolean;
+
   beforeEach(async () => {
+    healthCheckResponse = true;
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [
+        provideRouter([]),
+        { provide: User, useValue: { healthCheck: () => of(healthCheckResponse) } },
+      ],
     }).compileComponents();
   });
 
-  it('should create the app', () => {
+  it('should show the app routes when the health check returns true', () => {
     const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('router-outlet')).not.toBeNull();
   });
 
-  it('should render title', async () => {
+  it('should show an unavailable message when the health check returns false', () => {
+    healthCheckResponse = false;
     const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, crm');
+    fixture.detectChanges();
+
+    const rendered = fixture.nativeElement as HTMLElement;
+    expect(rendered.querySelector('router-outlet')).toBeNull();
+    expect(rendered.textContent).toContain('The server is unavailable');
   });
 });

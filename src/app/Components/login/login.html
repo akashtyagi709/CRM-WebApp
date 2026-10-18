@@ -1,0 +1,87 @@
+<main class="login-page">
+  <section class="login" aria-labelledby="login-title">
+    <header class="login-header">
+      <h1 id="login-title">Login</h1>
+    </header>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="username"
+          inputmode="email"
+          placeholder="you@company.com"
+          [attr.aria-invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
+          [attr.aria-describedby]="
+            loginForm.controls.email.invalid && loginForm.controls.email.touched
+              ? 'email-error'
+              : null
+          "
+          (input)="submitted.set(false); loginError.set('')"
+        />
+        @if (loginForm.controls.email.touched && loginForm.controls.email.hasError('required')) {
+          <p class="field-error" id="email-error">Enter your email address.</p>
+        } @else if (loginForm.controls.email.touched && loginForm.controls.email.hasError('email')) {
+          <p class="field-error" id="email-error">Enter a valid email address.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="Enter your password"
+            [attr.aria-invalid]="
+              loginForm.controls.password.invalid && loginForm.controls.password.touched
+            "
+            [attr.aria-describedby]="
+              loginForm.controls.password.invalid && loginForm.controls.password.touched
+                ? 'password-error'
+                : null
+            "
+            (input)="submitted.set(false); loginError.set('')"
+          />
+          <button
+            class="password-toggle"
+            type="button"
+            (click)="showPassword = !showPassword"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          >
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        @if (loginForm.controls.password.touched && loginForm.controls.password.hasError('required')) {
+          <p class="field-error" id="password-error">Enter your password.</p>
+        }
+      </div>
+
+      <div class="submit-button-slot">
+        <button
+          class="submit-button"
+          [class.is-loading]="isLoading()"
+          type="submit"
+          [disabled]="isLoading() || submitted()"
+          [attr.aria-label]="isLoading() ? 'Signing in' : null"
+          [attr.aria-busy]="isLoading()"
+        >
+          @if (isLoading()) {
+            <span class="loading-spinner" aria-hidden="true"></span>
+          } @else {
+            <span>{{ submitted() ? 'Signed in' : 'Sign in' }}</span>
+          }
+        </button>
+      </div>
+
+      @if (loginError()) {
+        <p class="form-error" role="alert">{{ loginError() }}</p>
+      }
+    </form>
+  </section>
+</main>

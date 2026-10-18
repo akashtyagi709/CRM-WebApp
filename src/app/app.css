@@ -1,0 +1,160 @@
+.service-page {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 24px;
+  overflow: auto;
+  background: radial-gradient(ellipse at 50% 44%, #fff 0%, #fafbfc 48%, var(--app-canvas) 100%);
+  text-align: center;
+}
+
+.service-page::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--app-accent) 50%, transparent);
+  content: "";
+  opacity: 0.75;
+}
+
+.service-icon {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 30px;
+  fill: none;
+  stroke: #b7791f;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.service-icon-alert path:first-child {
+  fill: #fff9ed;
+  stroke: #ead8b5;
+}
+
+.service-icon-alert path:last-child {
+  stroke: #9a6b24;
+  stroke-width: 1.8;
+}
+
+.service-icon-checking {
+  stroke: #d6deef;
+  stroke-width: 2;
+  animation: service-spin 1s linear infinite;
+}
+
+.service-icon-checking path {
+  fill: none;
+  stroke: var(--app-accent);
+  stroke-width: 3;
+}
+
+.service-label {
+  margin: 0 0 12px;
+  color: #79551e;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.service-page h1 {
+  max-width: 520px;
+  margin: 0;
+  color: var(--app-text);
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.2;
+}
+
+.service-copy {
+  max-width: 430px;
+  margin: 15px 0 0;
+  color: var(--app-text-muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.retry-button {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 30px;
+  padding: 0 19px;
+  border: 1px solid var(--app-accent);
+  border-radius: var(--app-radius);
+  background: var(--app-accent);
+  box-shadow: 0 2px 4px rgb(32 41 56 / 12%);
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 550;
+  transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.retry-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+  transition: transform 180ms ease;
+}
+
+.retry-button:hover {
+  transform: translateY(-1px);
+  background: var(--app-accent-hover);
+  box-shadow: 0 5px 12px rgb(32 41 56 / 17%);
+}
+
+.retry-button:hover svg {
+  transform: rotate(-35deg);
+}
+
+.retry-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgb(32 41 56 / 12%);
+}
+
+.retry-button:focus-visible {
+  outline: 3px solid rgb(52 88 197 / 24%);
+  outline-offset: 3px;
+}
+
+@keyframes service-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .service-page {
+    padding: 40px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-icon-checking {
+    animation-duration: 2s;
+  }
+
+  .retry-button,
+  .retry-button svg {
+    transition-duration: 0.01ms;
+  }
+}
