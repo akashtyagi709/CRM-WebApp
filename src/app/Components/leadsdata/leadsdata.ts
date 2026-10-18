@@ -1,3 +1,4 @@
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -29,6 +30,8 @@ interface ApiResponse<T> {
   data: T;
 }
 
+type PaginationItem = number | 'ellipsis';
+
 @Component({
   selector: 'app-leadsdata',
   standalone: true,
@@ -53,6 +56,7 @@ export class Leadsdata implements OnInit {
   savingStatus = false;
 
   readonly pageSizeOptions = [5, 10, 25];
+
   readonly statuses: LeadStatus[] = [
     'NEW',
     'CONTACTED',
@@ -62,7 +66,8 @@ export class Leadsdata implements OnInit {
 
   leads: Lead[] = [];
 
-  private readonly apiBaseUrl = environment.apiUrl.replace(/\/+$/, '');
+  private readonly apiBaseUrl =
+    environment.apiUrl.replace(/\/+$/, '');
 
   constructor(
     protected service: User,
@@ -74,7 +79,6 @@ export class Leadsdata implements OnInit {
     this.getLeadsData();
   }
 
-  // Fetch all leads
   getLeadsData(): void {
     this.loading = true;
     this.errorMessage = '';
@@ -100,13 +104,14 @@ export class Leadsdata implements OnInit {
 
         this.leads = [];
         this.loading = false;
-        this.errorMessage = 'Unable to load leads. Please try again.';
+        this.errorMessage =
+          'Unable to load leads. Please try again.';
+
         this.cdr.markForCheck();
       }
     });
   }
 
-  // Open the edit-status popup
   openStatusModal(lead: Lead): void {
     this.selectedLead = lead;
     this.selectedStatus = lead.status;
@@ -114,7 +119,6 @@ export class Leadsdata implements OnInit {
     this.cdr.markForCheck();
   }
 
-  // Close the popup
   closeStatusModal(): void {
     if (this.savingStatus) {
       return;
@@ -125,7 +129,6 @@ export class Leadsdata implements OnInit {
     this.cdr.markForCheck();
   }
 
-  // Read selected status from the popup
   onModalStatusChange(event: Event): void {
     this.selectedStatus =
       (event.target as HTMLSelectElement).value as LeadStatus;
@@ -133,66 +136,62 @@ export class Leadsdata implements OnInit {
     this.cdr.markForCheck();
   }
 
-  // Save status using PATCH
+  saveStatus(): void {
+    const lead = this.selectedLead;
 
-saveStatus(): void {
-  const lead = this.selectedLead;
-
-  if (!lead || this.savingStatus) {
-    return;
-  }
-
-  if (this.selectedStatus === lead.status) {
-    this.closeStatusModal();
-    return;
-  }
-
-  this.savingStatus = true;
-  this.cdr.markForCheck();
-
-  const url = `${this.apiBaseUrl}/${environment.leads}/${lead.id}/status`;
-
-  this.http.post<ApiResponse<Lead>>(url, {
-    status: this.selectedStatus
-  }).subscribe({
-    next: (response) => {
-      if (response?.success && response.data) {
-        const updatedLead = response.data;
-
-        this.leads = this.leads.map((item) =>
-          item.id === lead.id
-            ? { ...item, ...updatedLead }
-            : item
-        );
-
-        this.showStatusModal = false;
-        this.selectedLead = null;
-        this.errorMessage = '';
-
-        console.log('Lead status updated:', updatedLead);
-      } else {
-        this.errorMessage =
-          response?.msg || 'Unable to update lead status.';
-      }
-
-      this.savingStatus = false;
-      this.cdr.markForCheck();
-    },
-
-    error: (error) => {
-      console.error('Failed to update lead status:', error);
-
-      this.errorMessage =
-        error?.error?.msg || 'Failed to update lead status.';
-
-      this.savingStatus = false;
-      this.cdr.markForCheck();
+    if (!lead || this.savingStatus) {
+      return;
     }
-  });
-}
 
+    if (this.selectedStatus === lead.status) {
+      this.closeStatusModal();
+      return;
+    }
 
-  // Search and status filtering
+    this.savingStatus = true;
+    this.cdr.markForCheck();
+
+    const url =
+      `${this.apiBaseUrl}/${environment.leads}/${lead.id}/status`;
+
+    this.http.post<ApiResponse<Lead>>(url, {
+      status: this.selectedStatus
+    }).subscribe({
+      next: (response) => {
+        if (response?.success && response.data) {
+          const updatedLead = response.data;
+
+          this.leads = this.leads.map((item) =>
+            item.id === lead.id
+              ? { ...item, ...updatedLead }
+              : item
+          );
+
+          this.showStatusModal = false;
+          this.selectedLead = null;
+          this.errorMessage = '';
+
+          console.log('Lead status updated:', updatedLead);
+        } else {
+          this.errorMessage =
+            response?.msg || 'Unable to update lead status.';
+        }
+
+        this.savingStatus = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        console.error('Failed to update lead status:', error);
+
+        this.errorMessage =
+          error?.error?.msg || 'Failed to update lead status.';
+
+        this.savingStatus = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
   get filteredLeads(): Lead[] {
     const query = this.searchText.trim().toLowerCase();
 
@@ -212,7 +211,6 @@ saveStatus(): void {
     });
   }
 
-  // Summary values
   get activePipelineCount(): number {
     return this.leads.filter(
       (lead) =>
@@ -227,16 +225,46 @@ saveStatus(): void {
     ).length;
   }
 
-  // Pagination
   get totalPages(): number {
     return Math.ceil(this.filteredLeads.length / this.pageSize);
   }
 
-  get pageNumbers(): number[] {
-    return Array.from(
-      { length: this.totalPages },
-      (_, index) => index + 1
-    );
+  get pageNumbers(): PaginationItem[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+
+    if (total <= 7) {
+      return Array.from(
+        { length: total },
+        (_, index) => index + 1
+      );
+    }
+
+    if (current <= 4) {
+      return [1, 2, 3, 4, 5, 'ellipsis', total];
+    }
+
+    if (current >= total - 3) {
+      return [
+        1,
+        'ellipsis',
+        total - 4,
+        total - 3,
+        total - 2,
+        total - 1,
+        total
+      ];
+    }
+
+    return [
+      1,
+      'ellipsis',
+      current - 1,
+      current,
+      current + 1,
+      'ellipsis',
+      total
+    ];
   }
 
   get paginatedLeads(): Lead[] {
@@ -295,5 +323,9 @@ saveStatus(): void {
 
     this.currentPage = 1;
     this.cdr.markForCheck();
+  }
+
+  isPageNumber(page: PaginationItem): page is number {
+    return typeof page === 'number';
   }
 }

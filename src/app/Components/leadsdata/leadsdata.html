@@ -188,37 +188,43 @@
             </select>
           </label>
 
-          <nav class="page-navigation" aria-label="Pagination">
-            <button
-              type="button"
-              class="page-button"
-              [disabled]="currentPage <= 1"
-              (click)="goToPage(currentPage - 1)"
-            >
-              Previous
-            </button>
+          
+<nav class="page-navigation" aria-label="Pagination">
+  <button
+    type="button"
+    class="page-button"
+    [disabled]="currentPage <= 1"
+    (click)="goToPage(currentPage - 1)"
+  >
+    Previous
+  </button>
 
-            @for (page of pageNumbers; track page) {
-              <button
-                type="button"
-                class="page-button page-number"
-                [class.is-current]="currentPage === page"
-                [attr.aria-current]="currentPage === page ? 'page' : null"
-                (click)="goToPage(page)"
-              >
-                {{ page }}
-              </button>
-            }
+  @for (page of pageNumbers; track $index) {
+    @if (isPageNumber(page)) {
+      <button
+        type="button"
+        class="page-button page-number"
+        [class.is-current]="currentPage === page"
+        [attr.aria-current]="currentPage === page ? 'page' : null"
+        (click)="goToPage(page)"
+      >
+        {{ page }}
+      </button>
+    } @else {
+      <span class="pagination-ellipsis" aria-hidden="true">...</span>
+    }
+  }
 
-            <button
-              type="button"
-              class="page-button"
-              [disabled]="currentPage >= totalPages"
-              (click)="goToPage(currentPage + 1)"
-            >
-              Next
-            </button>
-          </nav>
+  <button
+    type="button"
+    class="page-button"
+    [disabled]="currentPage >= totalPages"
+    (click)="goToPage(currentPage + 1)"
+  >
+    Next
+  </button>
+</nav>
+
         </div>
       </footer>
     }
